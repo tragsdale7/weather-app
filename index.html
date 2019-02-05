@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Weather App</title>
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+	<link href="https://fonts.googleapis.com/css?family=Oswald" rel="stylesheet">
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<nav>
+		<div class="nav-container">
+			<h1>Weather App</h1>
+		</div>		
+	</nav>
+	
+	<div class="showcase-outer">
+		<section class="showcase">
+			<div class="error-msg"></div>
+			<p id="user-location"></p>
+			<div class="weather">
+				<img class='weather-img' src="" alt="" width='150' height='150'>
+				<div class="weather-info">
+					<div class="weather-temp"></div>
+					<div class="weather-description"></div>
+				</div>
+			</div>
+			<p id="demo"></p>
+			<div class="location-container">
+				<input type="text" placeholder="Enter a zip code" id='zipInput'>
+				<button class="location-btn">Update</button>
+				<br>
+				<input type="text" placeholder="Enter a city name" id='cityInput'>
+				<button class="city-btn">Update</button>
+			</div>
+
+			<!-- <div class="five-day-container">
+				<div class="day-container">
+					<p class="day-date">Today</p>
+					<img src="./img/fog.png" alt="" class="day-weather-img">
+					<div class="day-weather-temp"></div>
+					<div class="day-weather-description"></div>
+				</div>
+			</div> -->
+
+		</section>
+	</div>
+	
+	
+	<script src='./main.js'></script>
+</body>
+</html>

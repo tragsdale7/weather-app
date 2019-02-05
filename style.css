@@ -1,0 +1,90 @@
+/*start global styles*/
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	font-family: 'Oswald', sans-serif;
+}
+
+/*end global styles*/
+
+/*start nav*/
+nav {
+	background-color: #adfffd;
+	box-shadow: 0px 1px 6px black;
+}
+
+.nav-container {
+	max-width: 1100px;
+	margin: auto;
+	height: 100px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.nav-container h1 {
+	font-size: 3rem;
+}
+
+/*end nav*/
+
+/* start showcase */
+
+.showcase-outer {
+	margin-top: 50px;
+	display: flex;
+	justify-content: center;
+}
+
+.showcase {
+	/*display: flex;
+	justify-content: center;*/
+	display: inline-block;
+}
+
+.error-msg {
+	background-color: #FF9C9C;
+	border-radius: 5px;
+	text-align: center;
+	display: none;
+}
+
+#user-location {
+	font-size: 1.5rem;
+}
+
+.weather {
+	margin-top: 20px;
+	margin-bottom: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.weather-info {
+	padding-left: 30px;
+}
+
+.weather-temp {
+	font-size: 4rem;
+}
+
+.weather-description {
+	font-size: 2rem;
+}
+/*end showcase*/
+
+/*start location container*/
+.location-container {
+	margin-top: 50px;
+}
+
+.location-container * {
+	padding: 5px;
+	font-size: 1.3rem;
+}
+
+#cityInput {
+	margin-top: 10px;
+}
