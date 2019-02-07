@@ -88,3 +88,21 @@ nav {
 #cityInput {
 	margin-top: 10px;
 }
+
+/*end location container*/
+
+/*start five day container */
+.forecast-container {
+	margin-top: 50px;
+}
+
+.forecast-container > button, .day-container {
+	padding: 5px;
+}
+
+.five-day-container {
+	display: flex;
+	justify-content: space-between;
+}
+
+/*end five day container*/

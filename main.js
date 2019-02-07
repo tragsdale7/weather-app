@@ -8,7 +8,9 @@ let domElements = {
     cityInput: document.getElementById('cityInput'),
     updateZipBtn: document.querySelector('.location-btn'),
     updateCityBtn: document.querySelector('.city-btn'),
-    errorMsg: document.querySelector('.error-msg')
+    errorMsg: document.querySelector('.error-msg'),
+    fiveDayImages: document.querySelectorAll('.five-day-img'),
+    fiveDayDescriptons: document.querySelectorAll('.five-day-description')
 }
 
 // Event listeners
@@ -44,8 +46,8 @@ domElements.updateCityBtn.addEventListener('click', function(){
 (function getLocation() {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(pos){
-    	// showPosition(pos);
     	showCityAndCountry(pos);
+        // displayFiveDayForecast(pos);
     });
   } else { 
     domElements.x.innerHTML = "Geolocation is not supported by this browser.";
@@ -69,38 +71,38 @@ function displayLocation(city) {
 	domElements.userLocation.innerHTML = `Here is the current weather in <b>${city}, United States</b>`;
 }
 
-function displayDescription(desc) {
-	domElements.weatherDescription.textContent = desc;
+function displayDescription(el, description) {
+	el.textContent = description;
 }
 
 function displayTemperature(temp) {
 	domElements.weatherTemp.innerHTML = `${Math.round(temp)}\xB0`
 }
 
-function displayImage(id) {
+function displayImage(id, imageTag) {
 	switch (true) {
 		case id < 300:
-			domElements.weatherImg.src = './img/thunderstorm.png'
+			imageTag.src = './img/thunderstorm.png'
 			break;
 
 		case id < 600:
-			domElements.weatherImg.src = './img/rain.png'
+			imageTag.src = './img/rain.png'
 			break;
 
 		case id < 700:
-			domElements.weatherImg.src = './img/snow.png'
+			imageTag.src = './img/snow.png'
 			break;
 
 		case id < 800:
-			domElements.weatherImg.src = './img/fog.png'
+			imageTag.src = './img/fog.png'
 			break;
 
 		case id < 801:
-			domElements.weatherImg.src = './img/sun.png'
+			imageTag.src = './img/sun.png'
 			break;
 
 		case id < 805:
-			domElements.weatherImg.src = './img/cloudy.png'
+			imageTag.src = './img/cloudy.png'
 			break;
 	}
 }
@@ -131,10 +133,10 @@ function showCityAndCountry(position, isCity) {
 			// parse json into javascript object
 			let json = this.response;
 			let obj = JSON.parse(json);
-			console.log(obj);
+			// console.log(obj);
 			displayLocation(obj.name);
-			displayDescription(obj.weather[0].main);
-			displayImage(obj.weather[0].id);
+			displayDescription(domElements.weatherDescription, obj.weather[0].main);
+			displayImage(obj.weather[0].id, domElements.weatherImg);
 			displayTemperature(obj.main.temp)
             showPosition(obj.coord)
 		}
@@ -149,3 +151,95 @@ function showCityAndCountry(position, isCity) {
 	
 	xhttp.send(); 
 }
+
+function displayFiveDayForecast(location) {
+    // 5 day forecast API request
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function() {
+        // check that API request was successful
+        if(this.readyState === 4 && this.status === 200) {
+            // convert JSON to JS object
+            let json = this.response;
+            let obj = JSON.parse(json);
+            console.log(obj);
+            let return1 = get5DayHighs(obj, getIndexOfNextDay(obj));
+            console.log(return1);
+            console.log(domElements.fiveDayImages[0]);
+            display5DayImages(return1, domElements.fiveDayImages);
+            display5DayDescriptions(return1, domElements.fiveDayDescriptons);
+        }
+    }
+    
+    if(location.coords) {
+        xhttp.open('GET', `http://api.openweathermap.org/data/2.5/forecast?lat=${location.coords.latitude}&lon=${location.coords.longitude}&units=imperial&APPID=f791d1536e0411789668d40d454aa0f0`, true);
+    } else if(!isNaN(location)) {
+        xhttp.open('GET', `http://api.openweathermap.org/data/2.5/forecast?zip=${location},us&units=imperial&APPID=f791d1536e0411789668d40d454aa0f0`, true);
+    } else {
+        xhttp.open('GET', `http://api.openweathermap.org/data/2.5/forecast?q=${location},us&units=imperial&APPID=f791d1536e0411789668d40d454aa0f0`, true);
+    }
+    // xhttp.open('GET', 'http://api.openweathermap.org/data/2.5/forecast?q=albany,us&units=imperial&APPID=f791d1536e0411789668d40d454aa0f0', true);
+    xhttp.send();
+
+    function getIndexOfNextDay(APIresponse) {
+        // get todays date
+        let today = new Date();
+
+        // find and return the index of the next day
+        for(let i = 0; i < APIresponse.list.length; i++) {
+            if(today.getDate() != APIresponse.list[i].dt_txt.slice(8,10)) {
+                return i;
+            }
+        }
+    }
+
+    function get5DayHighs(APIresponse, startingIndex) {
+        let resultsArr = [];
+        let tracker = 1;
+        let high = 0;
+        let id = 0;
+        let description = '';
+
+        for(let i = startingIndex; i < APIresponse.list.length; i++) {
+            let resultsObj = {};
+            if(APIresponse.list[i].main.temp > high) {
+
+                high = APIresponse.list[i].main.temp;
+                id = APIresponse.list[i].weather[0].id;
+                description = APIresponse.list[i].weather[0].main;
+            }
+
+            if(tracker === 9 || i === APIresponse.list.length - 1) {
+                resultsObj.high = high;
+                resultsObj.id = id;
+                resultsObj.description = description;
+                resultsArr.push(resultsObj);
+                tracker = 1;
+                high = 0;
+                id = 0;
+                description = '';
+            }
+
+            tracker++;
+        }
+        return resultsArr;
+    }
+
+    function display5DayImages(arr, imageTags) {
+        for(let i = 0; i < arr.length; i++) {
+            displayImage(arr[i].id, imageTags[i])
+        }
+    }
+
+    function display5DayDescriptions(arr, descriptionTags) {
+        for(let i = 0; i < arr.length; i++) {
+            displayDescription(descriptionTags[i], arr[i].description)
+        }
+    }
+
+    function display5DayHighs(arr, highTags) {}
+}
+
+displayFiveDayForecast('phoenix')
+
+// http://api.openweathermap.org/data/2.5/forecast?q=atlanta,us&units=imperial&APPID=f791d1536e0411789668d40d454aa0f0
