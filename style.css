@@ -1,4 +1,4 @@
-/*start global styles*/
+start global styles*/
 * {
 	margin: 0;
 	padding: 0;
@@ -7,6 +7,17 @@
 }
 
 /*end global styles*/
+
+/*start utility classes*/
+.display-flex {
+	display: flex !important;
+}
+
+.opacity1 {
+	opacity: 1 !important;
+}
+
+/*end utility classes*/
 
 /*start nav*/
 nav {
@@ -103,6 +114,8 @@ nav {
 .five-day-container {
 	display: flex;
 	justify-content: space-between;
+	opacity: 0;
+	transition: opacity 0.6s ease-in 0s;
 }
-
-/*end five day container*/
+/*
+end five day container*/

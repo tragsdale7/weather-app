@@ -10,7 +10,12 @@ let domElements = {
     updateCityBtn: document.querySelector('.city-btn'),
     errorMsg: document.querySelector('.error-msg'),
     fiveDayImages: document.querySelectorAll('.five-day-img'),
-    fiveDayDescriptons: document.querySelectorAll('.five-day-description')
+    fiveDayDescriptons: document.querySelectorAll('.five-day-description'),
+    fiveDayHighs: document.querySelectorAll('.five-day-high'),
+    fiveDayBtn: document.querySelector('.forecast-container').getElementsByTagName('button')[0],
+    fiveDayContainer: document.querySelector('.five-day-container'),
+    fiveDayBtnCaret: document.getElementById('five-day-caret'),
+    fiveDayDates: document.querySelectorAll('.five-day-date')
 }
 
 // Event listeners
@@ -29,6 +34,7 @@ domElements.updateZipBtn.addEventListener('click', function(e){
 
     // update UI and reset input field 
     showCityAndCountry(position);
+    displayFiveDayForecast(position);
     domElements.zipInput.value = "";
 })
 
@@ -37,9 +43,18 @@ domElements.updateCityBtn.addEventListener('click', function(){
 
     // update UI using the inputted city name
     showCityAndCountry(city, true);
+    displayFiveDayForecast(city);
 
     //reset input field
     domElements.cityInput.value = '';
+});
+
+domElements.fiveDayBtn.addEventListener('click', function(){
+    // domElements.fiveDayContainer.classList.toggle('display-flex');
+    // domElements.fiveDayContainer.style.opacity = '1';
+    domElements.fiveDayContainer.classList.toggle('opacity1');
+    domElements.fiveDayBtnCaret.classList.toggle('fa-caret-right');
+    domElements.fiveDayBtnCaret.classList.toggle('fa-caret-down');
 });
 
 // end event listeners
@@ -47,7 +62,7 @@ domElements.updateCityBtn.addEventListener('click', function(){
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(pos){
     	showCityAndCountry(pos);
-        // displayFiveDayForecast(pos);
+        displayFiveDayForecast(pos);
     });
   } else { 
     domElements.x.innerHTML = "Geolocation is not supported by this browser.";
@@ -75,8 +90,8 @@ function displayDescription(el, description) {
 	el.textContent = description;
 }
 
-function displayTemperature(temp) {
-	domElements.weatherTemp.innerHTML = `${Math.round(temp)}\xB0`
+function displayTemperature(el, temp) {
+	el.innerHTML = `${Math.round(temp)}\xB0`;
 }
 
 function displayImage(id, imageTag) {
@@ -137,7 +152,7 @@ function showCityAndCountry(position, isCity) {
 			displayLocation(obj.name);
 			displayDescription(domElements.weatherDescription, obj.weather[0].main);
 			displayImage(obj.weather[0].id, domElements.weatherImg);
-			displayTemperature(obj.main.temp)
+			displayTemperature(domElements.weatherTemp, obj.main.temp)
             showPosition(obj.coord)
 		}
 	}
@@ -162,12 +177,12 @@ function displayFiveDayForecast(location) {
             // convert JSON to JS object
             let json = this.response;
             let obj = JSON.parse(json);
-            console.log(obj);
             let return1 = get5DayHighs(obj, getIndexOfNextDay(obj));
             console.log(return1);
-            console.log(domElements.fiveDayImages[0]);
             display5DayImages(return1, domElements.fiveDayImages);
             display5DayDescriptions(return1, domElements.fiveDayDescriptons);
+            display5DayHighs(return1, domElements.fiveDayHighs);
+            display5DayDates();
         }
     }
     
@@ -237,9 +252,37 @@ function displayFiveDayForecast(location) {
         }
     }
 
-    function display5DayHighs(arr, highTags) {}
+    function display5DayHighs(arr, highTags) {
+        for(let i = 0; i < arr.length; i++) {
+            displayTemperature(highTags[i], arr[i].high)
+        }
+    }
+
+    function display5DayDates() {
+        let today = new Date();
+        let dd = today.getDate();
+        let mm = today.getMonth() + 1; //January is 0!
+
+        if (dd < 10) {
+          dd = '0' + dd;
+        } 
+        if (mm < 10) {
+          mm = '0' + mm;
+        } 
+
+        today = mm + '/' + dd
+    
+        for(let i = 0; i < 5; i++) {
+            domElements.fiveDayDates[i].textContent = today;
+            dd++;
+            if (dd < 10) {
+                dd = '0' + dd;
+            } 
+            today = mm + '/' + dd;
+        }
+    }
 }
 
-displayFiveDayForecast('phoenix')
+
 
 // http://api.openweathermap.org/data/2.5/forecast?q=atlanta,us&units=imperial&APPID=f791d1536e0411789668d40d454aa0f0
